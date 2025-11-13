@@ -6,7 +6,7 @@ int main(void) {
     while(i <= 100){
         if((i % 13) == 2 || (i % 7) == 3){
             res ++;
-            // printf("i = %d\n", i);
+            // printf("i = %d\n", i); 
         }
         i++;
     }
