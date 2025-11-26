@@ -1,0 +1,1989 @@
+::stop-commands::***
+
+📝 基本点（提出確認）
+
+
+  提出を確認しました
+  
+✅ 基本点（提出確認）
+
+📝 コンパイル成功
+
+
+src/main.c: In function 'main':
+  src/main.c:29:9: warning: implicit declaration of function 'Win_FillRectangle'; did you mean 'Win_FillRect'? [-Wimplicit-function-declaration]
+     29 |         Win_FillRectangle(x, y, x + size, y + size, colors[i]);
+        |         ^~~~~~~~~~~~~~~~~
+        |         Win_FillRect
+  /usr/bin/ld: /tmp/ccMnUk8T.o: in function `main':
+  main.c:(.text.startup+0x125): undefined reference to `Win_FillRectangle'
+  /usr/bin/ld: main.c:(.text.startup+0x194): undefined reference to `Win_FillRectangle'
+  collect2: error: ld returned 1 exit status
+  
+❌ コンパイル成功
+::error::Error: Exit with code: 1 and signal: null
+📝 テスト1: for文の使用確認
+
+
+  ============================= test session starts ==============================
+  platform linux -- Python 3.10.12, pytest-8.4.2, pluggy-1.6.0 -- /usr/bin/python3
+  cachedir: .pytest_cache
+  rootdir: /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/tests
+  collecting ... collected 1 item
+  
+  test_exercise_8_3.py::test_01_for_loop_usage ERROR                       [100%]
+  
+  ==================================== ERRORS ====================================
+  ___________________ ERROR at setup of test_01_for_loop_usage ___________________
+  
+  module = <module 'test_exercise_8_3' from '/home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/tests/test_exercise_8_3.py'>
+  
+      def setup_module(module):
+          """テスト環境のセットアップ（コンパイル含む）"""
+          global exercise_dir, src_file, executable, debug_executable, test_source_file
+      
+          exercise_dir = Path(__file__).parent.parent
+          exercise_name = exercise_dir.name
+      
+          # ソースファイルの決定
+          src_dir = exercise_dir / "src"
+          if not src_dir.exists():
+              raise FileNotFoundError(f"srcディレクトリが見つかりません: {src_dir}")
+      
+          # コマンドライン引数または環境変数からソースファイルを取得
+          parser = argparse.ArgumentParser()
+          parser.add_argument('--source', default=None, help='テストするソースファイル')
+          args, unknown = parser.parse_known_args()
+      
+          source_filename = (
+              args.source or
+              os.environ.get('SOURCE_FILE') or
+              'main.c'
+          )
+      
+          test_source_file = src_dir / source_filename
+      
+          if not test_source_file.exists():
+              raise FileNotFoundError(f"ソースファイルが見つかりません: {test_source_file}")
+      
+          # 実行ファイル名を動的に生成
+          base_name = test_source_file.stem
+          executable = exercise_dir / f"{exercise_name}_{base_name}"
+          debug_executable = exercise_dir / f"{exercise_name}_{base_name}_debug"
+      
+          print(f"\n{'='*70}")
+          print(f"🚀 {exercise_name}のテストスイート")
+          print(f"{'='*70}")
+          print(f"📁 課題ディレクトリ: {exercise_dir}")
+          print(f"📄 テスト対象ソースファイル: {test_source_file.name}")
+          print(f"🔧 実行ファイル: {executable.name}")
+      
+          # コンパイル実行
+  >       _compile_programs()
+  
+  test_exercise_8_3.py:79: 
+  _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+  
+      def _compile_programs():
+          """コンパイル実行（SDL3対応）"""
+          # GraphicsLib.cのパス
+          graphics_lib = exercise_dir / "src" / "GraphicsLib.c"
+      
+          if not graphics_lib.exists():
+              raise FileNotFoundError(f"GraphicsLib.cが見つかりません: {graphics_lib}")
+      
+          # SDL3フラグの検出
+          sdl3_flags = []
+          if os.path.exists("/opt/homebrew/include"):
+              sdl3_flags = ["-I/opt/homebrew/include", "-L/opt/homebrew/lib"]
+          elif os.path.exists("/usr/local/include"):
+              sdl3_flags = ["-I/usr/local/include", "-L/usr/local/lib"]
+      
+          # 本番ビルド
+          production_flags = [
+              "gcc", "-std=c99", "-Wall", "-Wextra", "-O2",
+              str(test_source_file), str(graphics_lib),
+              "-o", str(executable),
+              *sdl3_flags,
+              "-lSDL3", "-lm"
+          ]
+      
+          # デバッグビルド
+          debug_flags = [
+              "gcc", "-std=c99", "-Wall", "-Wextra", "-g", "-O0",
+              "-DDEBUG", str(test_source_file), str(graphics_lib),
+              "-o", str(debug_executable),
+              *sdl3_flags,
+              "-lSDL3", "-lm"
+          ]
+      
+          print(f"\n🔨 コンパイル中（SDL3グラフィックス対応）...")
+          result_prod = subprocess.run(production_flags, capture_output=True, text=True)
+          if result_prod.returncode != 0:
+              print(f"\n❌ コンパイル失敗:")
+              print(f"STDERR: {result_prod.stderr}")
+  >           raise RuntimeError(f"コンパイルエラー: {result_prod.stderr}")
+  E           RuntimeError: コンパイルエラー: /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/src/main.c: In function ‘main’:
+  E           /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/src/main.c:29:9: warning: implicit declaration of function ‘Win_FillRectangle’; did you mean ‘Win_FillRect’? [-Wimplicit-function-declaration]
+  E              29 |         Win_FillRectangle(x, y, x + size, y + size, colors[i]);
+  E                 |         ^~~~~~~~~~~~~~~~~
+  E                 |         Win_FillRect
+  E           /usr/bin/ld: /tmp/ccnt8y5P.o: in function `main':
+  E           main.c:(.text.startup+0x125): undefined reference to `Win_FillRectangle'
+  E           /usr/bin/ld: main.c:(.text.startup+0x194): undefined reference to `Win_FillRectangle'
+  E           collect2: error: ld returned 1 exit status
+  
+  test_exercise_8_3.py:127: RuntimeError
+  ---------------------------- Captured stdout setup -----------------------------
+  
+  ======================================================================
+  🚀 ex8-3-t2500173のテストスイート
+  ======================================================================
+  📁 課題ディレクトリ: /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173
+  📄 テスト対象ソースファイル: main.c
+  🔧 実行ファイル: ex8-3-t2500173_main
+  
+  🔨 コンパイル中（SDL3グラフィックス対応）...
+  
+  ❌ コンパイル失敗:
+  STDERR: /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/src/main.c: In function ‘main’:
+  /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/src/main.c:29:9: warning: implicit declaration of function ‘Win_FillRectangle’; did you mean ‘Win_FillRect’? [-Wimplicit-function-declaration]
+     29 |         Win_FillRectangle(x, y, x + size, y + size, colors[i]);
+        |         ^~~~~~~~~~~~~~~~~
+        |         Win_FillRect
+  /usr/bin/ld: /tmp/ccnt8y5P.o: in function `main':
+  main.c:(.text.startup+0x125): undefined reference to `Win_FillRectangle'
+  /usr/bin/ld: main.c:(.text.startup+0x194): undefined reference to `Win_FillRectangle'
+  collect2: error: ld returned 1 exit status
+  
+  =========================== short test summary info ============================
+  ERROR test_exercise_8_3.py::test_01_for_loop_usage - RuntimeError: コンパイルエラー: /home.org/administrator/c-programming-runne...
+  =============================== 1 error in 0.24s ===============================
+  
+❌ テスト1: for文の使用確認
+::error::Error: Exit with code: 1 and signal: null
+📝 テスト2: while文の不使用確認
+
+
+  ============================= test session starts ==============================
+  platform linux -- Python 3.10.12, pytest-8.4.2, pluggy-1.6.0 -- /usr/bin/python3
+  cachedir: .pytest_cache
+  rootdir: /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/tests
+  collecting ... collected 1 item
+  
+  test_exercise_8_3.py::test_02_no_while_loop ERROR                        [100%]
+  
+  ==================================== ERRORS ====================================
+  ___________________ ERROR at setup of test_02_no_while_loop ____________________
+  
+  module = <module 'test_exercise_8_3' from '/home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/tests/test_exercise_8_3.py'>
+  
+      def setup_module(module):
+          """テスト環境のセットアップ（コンパイル含む）"""
+          global exercise_dir, src_file, executable, debug_executable, test_source_file
+      
+          exercise_dir = Path(__file__).parent.parent
+          exercise_name = exercise_dir.name
+      
+          # ソースファイルの決定
+          src_dir = exercise_dir / "src"
+          if not src_dir.exists():
+              raise FileNotFoundError(f"srcディレクトリが見つかりません: {src_dir}")
+      
+          # コマンドライン引数または環境変数からソースファイルを取得
+          parser = argparse.ArgumentParser()
+          parser.add_argument('--source', default=None, help='テストするソースファイル')
+          args, unknown = parser.parse_known_args()
+      
+          source_filename = (
+              args.source or
+              os.environ.get('SOURCE_FILE') or
+              'main.c'
+          )
+      
+          test_source_file = src_dir / source_filename
+      
+          if not test_source_file.exists():
+              raise FileNotFoundError(f"ソースファイルが見つかりません: {test_source_file}")
+      
+          # 実行ファイル名を動的に生成
+          base_name = test_source_file.stem
+          executable = exercise_dir / f"{exercise_name}_{base_name}"
+          debug_executable = exercise_dir / f"{exercise_name}_{base_name}_debug"
+      
+          print(f"\n{'='*70}")
+          print(f"🚀 {exercise_name}のテストスイート")
+          print(f"{'='*70}")
+          print(f"📁 課題ディレクトリ: {exercise_dir}")
+          print(f"📄 テスト対象ソースファイル: {test_source_file.name}")
+          print(f"🔧 実行ファイル: {executable.name}")
+      
+          # コンパイル実行
+  >       _compile_programs()
+  
+  test_exercise_8_3.py:79: 
+  _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+  
+      def _compile_programs():
+          """コンパイル実行（SDL3対応）"""
+          # GraphicsLib.cのパス
+          graphics_lib = exercise_dir / "src" / "GraphicsLib.c"
+      
+          if not graphics_lib.exists():
+              raise FileNotFoundError(f"GraphicsLib.cが見つかりません: {graphics_lib}")
+      
+          # SDL3フラグの検出
+          sdl3_flags = []
+          if os.path.exists("/opt/homebrew/include"):
+              sdl3_flags = ["-I/opt/homebrew/include", "-L/opt/homebrew/lib"]
+          elif os.path.exists("/usr/local/include"):
+              sdl3_flags = ["-I/usr/local/include", "-L/usr/local/lib"]
+      
+          # 本番ビルド
+          production_flags = [
+              "gcc", "-std=c99", "-Wall", "-Wextra", "-O2",
+              str(test_source_file), str(graphics_lib),
+              "-o", str(executable),
+              *sdl3_flags,
+              "-lSDL3", "-lm"
+          ]
+      
+          # デバッグビルド
+          debug_flags = [
+              "gcc", "-std=c99", "-Wall", "-Wextra", "-g", "-O0",
+              "-DDEBUG", str(test_source_file), str(graphics_lib),
+              "-o", str(debug_executable),
+              *sdl3_flags,
+              "-lSDL3", "-lm"
+          ]
+      
+          print(f"\n🔨 コンパイル中（SDL3グラフィックス対応）...")
+          result_prod = subprocess.run(production_flags, capture_output=True, text=True)
+          if result_prod.returncode != 0:
+              print(f"\n❌ コンパイル失敗:")
+              print(f"STDERR: {result_prod.stderr}")
+  >           raise RuntimeError(f"コンパイルエラー: {result_prod.stderr}")
+  E           RuntimeError: コンパイルエラー: /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/src/main.c: In function ‘main’:
+  E           /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/src/main.c:29:9: warning: implicit declaration of function ‘Win_FillRectangle’; did you mean ‘Win_FillRect’? [-Wimplicit-function-declaration]
+  E              29 |         Win_FillRectangle(x, y, x + size, y + size, colors[i]);
+  E                 |         ^~~~~~~~~~~~~~~~~
+  E                 |         Win_FillRect
+  E           /usr/bin/ld: /tmp/cchidkSW.o: in function `main':
+  E           main.c:(.text.startup+0x125): undefined reference to `Win_FillRectangle'
+  E           /usr/bin/ld: main.c:(.text.startup+0x194): undefined reference to `Win_FillRectangle'
+  E           collect2: error: ld returned 1 exit status
+  
+  test_exercise_8_3.py:127: RuntimeError
+  ---------------------------- Captured stdout setup -----------------------------
+  
+  ======================================================================
+  🚀 ex8-3-t2500173のテストスイート
+  ======================================================================
+  📁 課題ディレクトリ: /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173
+  📄 テスト対象ソースファイル: main.c
+  🔧 実行ファイル: ex8-3-t2500173_main
+  
+  🔨 コンパイル中（SDL3グラフィックス対応）...
+  
+  ❌ コンパイル失敗:
+  STDERR: /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/src/main.c: In function ‘main’:
+  /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/src/main.c:29:9: warning: implicit declaration of function ‘Win_FillRectangle’; did you mean ‘Win_FillRect’? [-Wimplicit-function-declaration]
+     29 |         Win_FillRectangle(x, y, x + size, y + size, colors[i]);
+        |         ^~~~~~~~~~~~~~~~~
+        |         Win_FillRect
+  /usr/bin/ld: /tmp/cchidkSW.o: in function `main':
+  main.c:(.text.startup+0x125): undefined reference to `Win_FillRectangle'
+  /usr/bin/ld: main.c:(.text.startup+0x194): undefined reference to `Win_FillRectangle'
+  collect2: error: ld returned 1 exit status
+  
+  =========================== short test summary info ============================
+  ERROR test_exercise_8_3.py::test_02_no_while_loop - RuntimeError: コンパイルエラー: /home.org/administrator/c-programming-runne...
+  =============================== 1 error in 0.23s ===============================
+  
+❌ テスト2: while文の不使用確認
+::error::Error: Exit with code: 1 and signal: null
+📝 テスト3: フィボナッチ数列生成確認
+
+
+  ============================= test session starts ==============================
+  platform linux -- Python 3.10.12, pytest-8.4.2, pluggy-1.6.0 -- /usr/bin/python3
+  cachedir: .pytest_cache
+  rootdir: /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/tests
+  collecting ... collected 1 item
+  
+  test_exercise_8_3.py::test_03_fibonacci_generation ERROR                 [100%]
+  
+  ==================================== ERRORS ====================================
+  ________________ ERROR at setup of test_03_fibonacci_generation ________________
+  
+  module = <module 'test_exercise_8_3' from '/home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/tests/test_exercise_8_3.py'>
+  
+      def setup_module(module):
+          """テスト環境のセットアップ（コンパイル含む）"""
+          global exercise_dir, src_file, executable, debug_executable, test_source_file
+      
+          exercise_dir = Path(__file__).parent.parent
+          exercise_name = exercise_dir.name
+      
+          # ソースファイルの決定
+          src_dir = exercise_dir / "src"
+          if not src_dir.exists():
+              raise FileNotFoundError(f"srcディレクトリが見つかりません: {src_dir}")
+      
+          # コマンドライン引数または環境変数からソースファイルを取得
+          parser = argparse.ArgumentParser()
+          parser.add_argument('--source', default=None, help='テストするソースファイル')
+          args, unknown = parser.parse_known_args()
+      
+          source_filename = (
+              args.source or
+              os.environ.get('SOURCE_FILE') or
+              'main.c'
+          )
+      
+          test_source_file = src_dir / source_filename
+      
+          if not test_source_file.exists():
+              raise FileNotFoundError(f"ソースファイルが見つかりません: {test_source_file}")
+      
+          # 実行ファイル名を動的に生成
+          base_name = test_source_file.stem
+          executable = exercise_dir / f"{exercise_name}_{base_name}"
+          debug_executable = exercise_dir / f"{exercise_name}_{base_name}_debug"
+      
+          print(f"\n{'='*70}")
+          print(f"🚀 {exercise_name}のテストスイート")
+          print(f"{'='*70}")
+          print(f"📁 課題ディレクトリ: {exercise_dir}")
+          print(f"📄 テスト対象ソースファイル: {test_source_file.name}")
+          print(f"🔧 実行ファイル: {executable.name}")
+      
+          # コンパイル実行
+  >       _compile_programs()
+  
+  test_exercise_8_3.py:79: 
+  _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+  
+      def _compile_programs():
+          """コンパイル実行（SDL3対応）"""
+          # GraphicsLib.cのパス
+          graphics_lib = exercise_dir / "src" / "GraphicsLib.c"
+      
+          if not graphics_lib.exists():
+              raise FileNotFoundError(f"GraphicsLib.cが見つかりません: {graphics_lib}")
+      
+          # SDL3フラグの検出
+          sdl3_flags = []
+          if os.path.exists("/opt/homebrew/include"):
+              sdl3_flags = ["-I/opt/homebrew/include", "-L/opt/homebrew/lib"]
+          elif os.path.exists("/usr/local/include"):
+              sdl3_flags = ["-I/usr/local/include", "-L/usr/local/lib"]
+      
+          # 本番ビルド
+          production_flags = [
+              "gcc", "-std=c99", "-Wall", "-Wextra", "-O2",
+              str(test_source_file), str(graphics_lib),
+              "-o", str(executable),
+              *sdl3_flags,
+              "-lSDL3", "-lm"
+          ]
+      
+          # デバッグビルド
+          debug_flags = [
+              "gcc", "-std=c99", "-Wall", "-Wextra", "-g", "-O0",
+              "-DDEBUG", str(test_source_file), str(graphics_lib),
+              "-o", str(debug_executable),
+              *sdl3_flags,
+              "-lSDL3", "-lm"
+          ]
+      
+          print(f"\n🔨 コンパイル中（SDL3グラフィックス対応）...")
+          result_prod = subprocess.run(production_flags, capture_output=True, text=True)
+          if result_prod.returncode != 0:
+              print(f"\n❌ コンパイル失敗:")
+              print(f"STDERR: {result_prod.stderr}")
+  >           raise RuntimeError(f"コンパイルエラー: {result_prod.stderr}")
+  E           RuntimeError: コンパイルエラー: /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/src/main.c: In function ‘main’:
+  E           /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/src/main.c:29:9: warning: implicit declaration of function ‘Win_FillRectangle’; did you mean ‘Win_FillRect’? [-Wimplicit-function-declaration]
+  E              29 |         Win_FillRectangle(x, y, x + size, y + size, colors[i]);
+  E                 |         ^~~~~~~~~~~~~~~~~
+  E                 |         Win_FillRect
+  E           /usr/bin/ld: /tmp/cc7eKiV9.o: in function `main':
+  E           main.c:(.text.startup+0x125): undefined reference to `Win_FillRectangle'
+  E           /usr/bin/ld: main.c:(.text.startup+0x194): undefined reference to `Win_FillRectangle'
+  E           collect2: error: ld returned 1 exit status
+  
+  test_exercise_8_3.py:127: RuntimeError
+  ---------------------------- Captured stdout setup -----------------------------
+  
+  ======================================================================
+  🚀 ex8-3-t2500173のテストスイート
+  ======================================================================
+  📁 課題ディレクトリ: /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173
+  📄 テスト対象ソースファイル: main.c
+  🔧 実行ファイル: ex8-3-t2500173_main
+  
+  🔨 コンパイル中（SDL3グラフィックス対応）...
+  
+  ❌ コンパイル失敗:
+  STDERR: /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/src/main.c: In function ‘main’:
+  /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/src/main.c:29:9: warning: implicit declaration of function ‘Win_FillRectangle’; did you mean ‘Win_FillRect’? [-Wimplicit-function-declaration]
+     29 |         Win_FillRectangle(x, y, x + size, y + size, colors[i]);
+        |         ^~~~~~~~~~~~~~~~~
+        |         Win_FillRect
+  /usr/bin/ld: /tmp/cc7eKiV9.o: in function `main':
+  main.c:(.text.startup+0x125): undefined reference to `Win_FillRectangle'
+  /usr/bin/ld: main.c:(.text.startup+0x194): undefined reference to `Win_FillRectangle'
+  collect2: error: ld returned 1 exit status
+  
+  =========================== short test summary info ============================
+  ERROR test_exercise_8_3.py::test_03_fibonacci_generation - RuntimeError: コンパイルエラー: /home.org/administrator/c-programming-runne...
+  =============================== 1 error in 0.22s ===============================
+  
+❌ テスト3: フィボナッチ数列生成確認
+::error::Error: Exit with code: 1 and signal: null
+📝 テスト4: GraphicsLib関数使用確認
+
+
+  ============================= test session starts ==============================
+  platform linux -- Python 3.10.12, pytest-8.4.2, pluggy-1.6.0 -- /usr/bin/python3
+  cachedir: .pytest_cache
+  rootdir: /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/tests
+  collecting ... collected 1 item
+  
+  test_exercise_8_3.py::test_04_graphics_lib_functions ERROR               [100%]
+  
+  ==================================== ERRORS ====================================
+  _______________ ERROR at setup of test_04_graphics_lib_functions _______________
+  
+  module = <module 'test_exercise_8_3' from '/home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/tests/test_exercise_8_3.py'>
+  
+      def setup_module(module):
+          """テスト環境のセットアップ（コンパイル含む）"""
+          global exercise_dir, src_file, executable, debug_executable, test_source_file
+      
+          exercise_dir = Path(__file__).parent.parent
+          exercise_name = exercise_dir.name
+      
+          # ソースファイルの決定
+          src_dir = exercise_dir / "src"
+          if not src_dir.exists():
+              raise FileNotFoundError(f"srcディレクトリが見つかりません: {src_dir}")
+      
+          # コマンドライン引数または環境変数からソースファイルを取得
+          parser = argparse.ArgumentParser()
+          parser.add_argument('--source', default=None, help='テストするソースファイル')
+          args, unknown = parser.parse_known_args()
+      
+          source_filename = (
+              args.source or
+              os.environ.get('SOURCE_FILE') or
+              'main.c'
+          )
+      
+          test_source_file = src_dir / source_filename
+      
+          if not test_source_file.exists():
+              raise FileNotFoundError(f"ソースファイルが見つかりません: {test_source_file}")
+      
+          # 実行ファイル名を動的に生成
+          base_name = test_source_file.stem
+          executable = exercise_dir / f"{exercise_name}_{base_name}"
+          debug_executable = exercise_dir / f"{exercise_name}_{base_name}_debug"
+      
+          print(f"\n{'='*70}")
+          print(f"🚀 {exercise_name}のテストスイート")
+          print(f"{'='*70}")
+          print(f"📁 課題ディレクトリ: {exercise_dir}")
+          print(f"📄 テスト対象ソースファイル: {test_source_file.name}")
+          print(f"🔧 実行ファイル: {executable.name}")
+      
+          # コンパイル実行
+  >       _compile_programs()
+  
+  test_exercise_8_3.py:79: 
+  _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+  
+      def _compile_programs():
+          """コンパイル実行（SDL3対応）"""
+          # GraphicsLib.cのパス
+          graphics_lib = exercise_dir / "src" / "GraphicsLib.c"
+      
+          if not graphics_lib.exists():
+              raise FileNotFoundError(f"GraphicsLib.cが見つかりません: {graphics_lib}")
+      
+          # SDL3フラグの検出
+          sdl3_flags = []
+          if os.path.exists("/opt/homebrew/include"):
+              sdl3_flags = ["-I/opt/homebrew/include", "-L/opt/homebrew/lib"]
+          elif os.path.exists("/usr/local/include"):
+              sdl3_flags = ["-I/usr/local/include", "-L/usr/local/lib"]
+      
+          # 本番ビルド
+          production_flags = [
+              "gcc", "-std=c99", "-Wall", "-Wextra", "-O2",
+              str(test_source_file), str(graphics_lib),
+              "-o", str(executable),
+              *sdl3_flags,
+              "-lSDL3", "-lm"
+          ]
+      
+          # デバッグビルド
+          debug_flags = [
+              "gcc", "-std=c99", "-Wall", "-Wextra", "-g", "-O0",
+              "-DDEBUG", str(test_source_file), str(graphics_lib),
+              "-o", str(debug_executable),
+              *sdl3_flags,
+              "-lSDL3", "-lm"
+          ]
+      
+          print(f"\n🔨 コンパイル中（SDL3グラフィックス対応）...")
+          result_prod = subprocess.run(production_flags, capture_output=True, text=True)
+          if result_prod.returncode != 0:
+              print(f"\n❌ コンパイル失敗:")
+              print(f"STDERR: {result_prod.stderr}")
+  >           raise RuntimeError(f"コンパイルエラー: {result_prod.stderr}")
+  E           RuntimeError: コンパイルエラー: /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/src/main.c: In function ‘main’:
+  E           /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/src/main.c:29:9: warning: implicit declaration of function ‘Win_FillRectangle’; did you mean ‘Win_FillRect’? [-Wimplicit-function-declaration]
+  E              29 |         Win_FillRectangle(x, y, x + size, y + size, colors[i]);
+  E                 |         ^~~~~~~~~~~~~~~~~
+  E                 |         Win_FillRect
+  E           /usr/bin/ld: /tmp/cc7Bowua.o: in function `main':
+  E           main.c:(.text.startup+0x125): undefined reference to `Win_FillRectangle'
+  E           /usr/bin/ld: main.c:(.text.startup+0x194): undefined reference to `Win_FillRectangle'
+  E           collect2: error: ld returned 1 exit status
+  
+  test_exercise_8_3.py:127: RuntimeError
+  ---------------------------- Captured stdout setup -----------------------------
+  
+  ======================================================================
+  🚀 ex8-3-t2500173のテストスイート
+  ======================================================================
+  📁 課題ディレクトリ: /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173
+  📄 テスト対象ソースファイル: main.c
+  🔧 実行ファイル: ex8-3-t2500173_main
+  
+  🔨 コンパイル中（SDL3グラフィックス対応）...
+  
+  ❌ コンパイル失敗:
+  STDERR: /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/src/main.c: In function ‘main’:
+  /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/src/main.c:29:9: warning: implicit declaration of function ‘Win_FillRectangle’; did you mean ‘Win_FillRect’? [-Wimplicit-function-declaration]
+     29 |         Win_FillRectangle(x, y, x + size, y + size, colors[i]);
+        |         ^~~~~~~~~~~~~~~~~
+        |         Win_FillRect
+  /usr/bin/ld: /tmp/cc7Bowua.o: in function `main':
+  main.c:(.text.startup+0x125): undefined reference to `Win_FillRectangle'
+  /usr/bin/ld: main.c:(.text.startup+0x194): undefined reference to `Win_FillRectangle'
+  collect2: error: ld returned 1 exit status
+  
+  =========================== short test summary info ============================
+  ERROR test_exercise_8_3.py::test_04_graphics_lib_functions - RuntimeError: コンパイルエラー: /home.org/administrator/c-programming-runne...
+  =============================== 1 error in 0.23s ===============================
+  
+❌ テスト4: GraphicsLib関数使用確認
+::error::Error: Exit with code: 1 and signal: null
+📝 テスト5: Win_FillRect使用確認
+
+
+  ============================= test session starts ==============================
+  platform linux -- Python 3.10.12, pytest-8.4.2, pluggy-1.6.0 -- /usr/bin/python3
+  cachedir: .pytest_cache
+  rootdir: /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/tests
+  collecting ... collected 1 item
+  
+  test_exercise_8_3.py::test_05_fillrect_usage ERROR                       [100%]
+  
+  ==================================== ERRORS ====================================
+  ___________________ ERROR at setup of test_05_fillrect_usage ___________________
+  
+  module = <module 'test_exercise_8_3' from '/home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/tests/test_exercise_8_3.py'>
+  
+      def setup_module(module):
+          """テスト環境のセットアップ（コンパイル含む）"""
+          global exercise_dir, src_file, executable, debug_executable, test_source_file
+      
+          exercise_dir = Path(__file__).parent.parent
+          exercise_name = exercise_dir.name
+      
+          # ソースファイルの決定
+          src_dir = exercise_dir / "src"
+          if not src_dir.exists():
+              raise FileNotFoundError(f"srcディレクトリが見つかりません: {src_dir}")
+      
+          # コマンドライン引数または環境変数からソースファイルを取得
+          parser = argparse.ArgumentParser()
+          parser.add_argument('--source', default=None, help='テストするソースファイル')
+          args, unknown = parser.parse_known_args()
+      
+          source_filename = (
+              args.source or
+              os.environ.get('SOURCE_FILE') or
+              'main.c'
+          )
+      
+          test_source_file = src_dir / source_filename
+      
+          if not test_source_file.exists():
+              raise FileNotFoundError(f"ソースファイルが見つかりません: {test_source_file}")
+      
+          # 実行ファイル名を動的に生成
+          base_name = test_source_file.stem
+          executable = exercise_dir / f"{exercise_name}_{base_name}"
+          debug_executable = exercise_dir / f"{exercise_name}_{base_name}_debug"
+      
+          print(f"\n{'='*70}")
+          print(f"🚀 {exercise_name}のテストスイート")
+          print(f"{'='*70}")
+          print(f"📁 課題ディレクトリ: {exercise_dir}")
+          print(f"📄 テスト対象ソースファイル: {test_source_file.name}")
+          print(f"🔧 実行ファイル: {executable.name}")
+      
+          # コンパイル実行
+  >       _compile_programs()
+  
+  test_exercise_8_3.py:79: 
+  _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+  
+      def _compile_programs():
+          """コンパイル実行（SDL3対応）"""
+          # GraphicsLib.cのパス
+          graphics_lib = exercise_dir / "src" / "GraphicsLib.c"
+      
+          if not graphics_lib.exists():
+              raise FileNotFoundError(f"GraphicsLib.cが見つかりません: {graphics_lib}")
+      
+          # SDL3フラグの検出
+          sdl3_flags = []
+          if os.path.exists("/opt/homebrew/include"):
+              sdl3_flags = ["-I/opt/homebrew/include", "-L/opt/homebrew/lib"]
+          elif os.path.exists("/usr/local/include"):
+              sdl3_flags = ["-I/usr/local/include", "-L/usr/local/lib"]
+      
+          # 本番ビルド
+          production_flags = [
+              "gcc", "-std=c99", "-Wall", "-Wextra", "-O2",
+              str(test_source_file), str(graphics_lib),
+              "-o", str(executable),
+              *sdl3_flags,
+              "-lSDL3", "-lm"
+          ]
+      
+          # デバッグビルド
+          debug_flags = [
+              "gcc", "-std=c99", "-Wall", "-Wextra", "-g", "-O0",
+              "-DDEBUG", str(test_source_file), str(graphics_lib),
+              "-o", str(debug_executable),
+              *sdl3_flags,
+              "-lSDL3", "-lm"
+          ]
+      
+          print(f"\n🔨 コンパイル中（SDL3グラフィックス対応）...")
+          result_prod = subprocess.run(production_flags, capture_output=True, text=True)
+          if result_prod.returncode != 0:
+              print(f"\n❌ コンパイル失敗:")
+              print(f"STDERR: {result_prod.stderr}")
+  >           raise RuntimeError(f"コンパイルエラー: {result_prod.stderr}")
+  E           RuntimeError: コンパイルエラー: /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/src/main.c: In function ‘main’:
+  E           /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/src/main.c:29:9: warning: implicit declaration of function ‘Win_FillRectangle’; did you mean ‘Win_FillRect’? [-Wimplicit-function-declaration]
+  E              29 |         Win_FillRectangle(x, y, x + size, y + size, colors[i]);
+  E                 |         ^~~~~~~~~~~~~~~~~
+  E                 |         Win_FillRect
+  E           /usr/bin/ld: /tmp/ccf7nY7Z.o: in function `main':
+  E           main.c:(.text.startup+0x125): undefined reference to `Win_FillRectangle'
+  E           /usr/bin/ld: main.c:(.text.startup+0x194): undefined reference to `Win_FillRectangle'
+  E           collect2: error: ld returned 1 exit status
+  
+  test_exercise_8_3.py:127: RuntimeError
+  ---------------------------- Captured stdout setup -----------------------------
+  
+  ======================================================================
+  🚀 ex8-3-t2500173のテストスイート
+  ======================================================================
+  📁 課題ディレクトリ: /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173
+  📄 テスト対象ソースファイル: main.c
+  🔧 実行ファイル: ex8-3-t2500173_main
+  
+  🔨 コンパイル中（SDL3グラフィックス対応）...
+  
+  ❌ コンパイル失敗:
+  STDERR: /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/src/main.c: In function ‘main’:
+  /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/src/main.c:29:9: warning: implicit declaration of function ‘Win_FillRectangle’; did you mean ‘Win_FillRect’? [-Wimplicit-function-declaration]
+     29 |         Win_FillRectangle(x, y, x + size, y + size, colors[i]);
+        |         ^~~~~~~~~~~~~~~~~
+        |         Win_FillRect
+  /usr/bin/ld: /tmp/ccf7nY7Z.o: in function `main':
+  main.c:(.text.startup+0x125): undefined reference to `Win_FillRectangle'
+  /usr/bin/ld: main.c:(.text.startup+0x194): undefined reference to `Win_FillRectangle'
+  collect2: error: ld returned 1 exit status
+  
+  =========================== short test summary info ============================
+  ERROR test_exercise_8_3.py::test_05_fillrect_usage - RuntimeError: コンパイルエラー: /home.org/administrator/c-programming-runne...
+  =============================== 1 error in 0.24s ===============================
+  
+❌ テスト5: Win_FillRect使用確認
+::error::Error: Exit with code: 1 and signal: null
+📝 テスト6: Win_Line使用確認
+
+
+  ============================= test session starts ==============================
+  platform linux -- Python 3.10.12, pytest-8.4.2, pluggy-1.6.0 -- /usr/bin/python3
+  cachedir: .pytest_cache
+  rootdir: /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/tests
+  collecting ... collected 1 item
+  
+  test_exercise_8_3.py::test_06_line_usage ERROR                           [100%]
+  
+  ==================================== ERRORS ====================================
+  _____________________ ERROR at setup of test_06_line_usage _____________________
+  
+  module = <module 'test_exercise_8_3' from '/home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/tests/test_exercise_8_3.py'>
+  
+      def setup_module(module):
+          """テスト環境のセットアップ（コンパイル含む）"""
+          global exercise_dir, src_file, executable, debug_executable, test_source_file
+      
+          exercise_dir = Path(__file__).parent.parent
+          exercise_name = exercise_dir.name
+      
+          # ソースファイルの決定
+          src_dir = exercise_dir / "src"
+          if not src_dir.exists():
+              raise FileNotFoundError(f"srcディレクトリが見つかりません: {src_dir}")
+      
+          # コマンドライン引数または環境変数からソースファイルを取得
+          parser = argparse.ArgumentParser()
+          parser.add_argument('--source', default=None, help='テストするソースファイル')
+          args, unknown = parser.parse_known_args()
+      
+          source_filename = (
+              args.source or
+              os.environ.get('SOURCE_FILE') or
+              'main.c'
+          )
+      
+          test_source_file = src_dir / source_filename
+      
+          if not test_source_file.exists():
+              raise FileNotFoundError(f"ソースファイルが見つかりません: {test_source_file}")
+      
+          # 実行ファイル名を動的に生成
+          base_name = test_source_file.stem
+          executable = exercise_dir / f"{exercise_name}_{base_name}"
+          debug_executable = exercise_dir / f"{exercise_name}_{base_name}_debug"
+      
+          print(f"\n{'='*70}")
+          print(f"🚀 {exercise_name}のテストスイート")
+          print(f"{'='*70}")
+          print(f"📁 課題ディレクトリ: {exercise_dir}")
+          print(f"📄 テスト対象ソースファイル: {test_source_file.name}")
+          print(f"🔧 実行ファイル: {executable.name}")
+      
+          # コンパイル実行
+  >       _compile_programs()
+  
+  test_exercise_8_3.py:79: 
+  _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+  
+      def _compile_programs():
+          """コンパイル実行（SDL3対応）"""
+          # GraphicsLib.cのパス
+          graphics_lib = exercise_dir / "src" / "GraphicsLib.c"
+      
+          if not graphics_lib.exists():
+              raise FileNotFoundError(f"GraphicsLib.cが見つかりません: {graphics_lib}")
+      
+          # SDL3フラグの検出
+          sdl3_flags = []
+          if os.path.exists("/opt/homebrew/include"):
+              sdl3_flags = ["-I/opt/homebrew/include", "-L/opt/homebrew/lib"]
+          elif os.path.exists("/usr/local/include"):
+              sdl3_flags = ["-I/usr/local/include", "-L/usr/local/lib"]
+      
+          # 本番ビルド
+          production_flags = [
+              "gcc", "-std=c99", "-Wall", "-Wextra", "-O2",
+              str(test_source_file), str(graphics_lib),
+              "-o", str(executable),
+              *sdl3_flags,
+              "-lSDL3", "-lm"
+          ]
+      
+          # デバッグビルド
+          debug_flags = [
+              "gcc", "-std=c99", "-Wall", "-Wextra", "-g", "-O0",
+              "-DDEBUG", str(test_source_file), str(graphics_lib),
+              "-o", str(debug_executable),
+              *sdl3_flags,
+              "-lSDL3", "-lm"
+          ]
+      
+          print(f"\n🔨 コンパイル中（SDL3グラフィックス対応）...")
+          result_prod = subprocess.run(production_flags, capture_output=True, text=True)
+          if result_prod.returncode != 0:
+              print(f"\n❌ コンパイル失敗:")
+              print(f"STDERR: {result_prod.stderr}")
+  >           raise RuntimeError(f"コンパイルエラー: {result_prod.stderr}")
+  E           RuntimeError: コンパイルエラー: /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/src/main.c: In function ‘main’:
+  E           /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/src/main.c:29:9: warning: implicit declaration of function ‘Win_FillRectangle’; did you mean ‘Win_FillRect’? [-Wimplicit-function-declaration]
+  E              29 |         Win_FillRectangle(x, y, x + size, y + size, colors[i]);
+  E                 |         ^~~~~~~~~~~~~~~~~
+  E                 |         Win_FillRect
+  E           /usr/bin/ld: /tmp/ccyMivLL.o: in function `main':
+  E           main.c:(.text.startup+0x125): undefined reference to `Win_FillRectangle'
+  E           /usr/bin/ld: main.c:(.text.startup+0x194): undefined reference to `Win_FillRectangle'
+  E           collect2: error: ld returned 1 exit status
+  
+  test_exercise_8_3.py:127: RuntimeError
+  ---------------------------- Captured stdout setup -----------------------------
+  
+  ======================================================================
+  🚀 ex8-3-t2500173のテストスイート
+  ======================================================================
+  📁 課題ディレクトリ: /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173
+  📄 テスト対象ソースファイル: main.c
+  🔧 実行ファイル: ex8-3-t2500173_main
+  
+  🔨 コンパイル中（SDL3グラフィックス対応）...
+  
+  ❌ コンパイル失敗:
+  STDERR: /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/src/main.c: In function ‘main’:
+  /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/src/main.c:29:9: warning: implicit declaration of function ‘Win_FillRectangle’; did you mean ‘Win_FillRect’? [-Wimplicit-function-declaration]
+     29 |         Win_FillRectangle(x, y, x + size, y + size, colors[i]);
+        |         ^~~~~~~~~~~~~~~~~
+        |         Win_FillRect
+  /usr/bin/ld: /tmp/ccyMivLL.o: in function `main':
+  main.c:(.text.startup+0x125): undefined reference to `Win_FillRectangle'
+  /usr/bin/ld: main.c:(.text.startup+0x194): undefined reference to `Win_FillRectangle'
+  collect2: error: ld returned 1 exit status
+  
+  =========================== short test summary info ============================
+  ERROR test_exercise_8_3.py::test_06_line_usage - RuntimeError: コンパイルエラー: /home.org/administrator/c-programming-runne...
+  =============================== 1 error in 0.23s ===============================
+  
+❌ テスト6: Win_Line使用確認
+::error::Error: Exit with code: 1 and signal: null
+📝 テスト7: 変数宣言確認
+
+
+  ============================= test session starts ==============================
+  platform linux -- Python 3.10.12, pytest-8.4.2, pluggy-1.6.0 -- /usr/bin/python3
+  cachedir: .pytest_cache
+  rootdir: /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/tests
+  collecting ... collected 1 item
+  
+  test_exercise_8_3.py::test_07_variable_declarations ERROR                [100%]
+  
+  ==================================== ERRORS ====================================
+  _______________ ERROR at setup of test_07_variable_declarations ________________
+  
+  module = <module 'test_exercise_8_3' from '/home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/tests/test_exercise_8_3.py'>
+  
+      def setup_module(module):
+          """テスト環境のセットアップ（コンパイル含む）"""
+          global exercise_dir, src_file, executable, debug_executable, test_source_file
+      
+          exercise_dir = Path(__file__).parent.parent
+          exercise_name = exercise_dir.name
+      
+          # ソースファイルの決定
+          src_dir = exercise_dir / "src"
+          if not src_dir.exists():
+              raise FileNotFoundError(f"srcディレクトリが見つかりません: {src_dir}")
+      
+          # コマンドライン引数または環境変数からソースファイルを取得
+          parser = argparse.ArgumentParser()
+          parser.add_argument('--source', default=None, help='テストするソースファイル')
+          args, unknown = parser.parse_known_args()
+      
+          source_filename = (
+              args.source or
+              os.environ.get('SOURCE_FILE') or
+              'main.c'
+          )
+      
+          test_source_file = src_dir / source_filename
+      
+          if not test_source_file.exists():
+              raise FileNotFoundError(f"ソースファイルが見つかりません: {test_source_file}")
+      
+          # 実行ファイル名を動的に生成
+          base_name = test_source_file.stem
+          executable = exercise_dir / f"{exercise_name}_{base_name}"
+          debug_executable = exercise_dir / f"{exercise_name}_{base_name}_debug"
+      
+          print(f"\n{'='*70}")
+          print(f"🚀 {exercise_name}のテストスイート")
+          print(f"{'='*70}")
+          print(f"📁 課題ディレクトリ: {exercise_dir}")
+          print(f"📄 テスト対象ソースファイル: {test_source_file.name}")
+          print(f"🔧 実行ファイル: {executable.name}")
+      
+          # コンパイル実行
+  >       _compile_programs()
+  
+  test_exercise_8_3.py:79: 
+  _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+  
+      def _compile_programs():
+          """コンパイル実行（SDL3対応）"""
+          # GraphicsLib.cのパス
+          graphics_lib = exercise_dir / "src" / "GraphicsLib.c"
+      
+          if not graphics_lib.exists():
+              raise FileNotFoundError(f"GraphicsLib.cが見つかりません: {graphics_lib}")
+      
+          # SDL3フラグの検出
+          sdl3_flags = []
+          if os.path.exists("/opt/homebrew/include"):
+              sdl3_flags = ["-I/opt/homebrew/include", "-L/opt/homebrew/lib"]
+          elif os.path.exists("/usr/local/include"):
+              sdl3_flags = ["-I/usr/local/include", "-L/usr/local/lib"]
+      
+          # 本番ビルド
+          production_flags = [
+              "gcc", "-std=c99", "-Wall", "-Wextra", "-O2",
+              str(test_source_file), str(graphics_lib),
+              "-o", str(executable),
+              *sdl3_flags,
+              "-lSDL3", "-lm"
+          ]
+      
+          # デバッグビルド
+          debug_flags = [
+              "gcc", "-std=c99", "-Wall", "-Wextra", "-g", "-O0",
+              "-DDEBUG", str(test_source_file), str(graphics_lib),
+              "-o", str(debug_executable),
+              *sdl3_flags,
+              "-lSDL3", "-lm"
+          ]
+      
+          print(f"\n🔨 コンパイル中（SDL3グラフィックス対応）...")
+          result_prod = subprocess.run(production_flags, capture_output=True, text=True)
+          if result_prod.returncode != 0:
+              print(f"\n❌ コンパイル失敗:")
+              print(f"STDERR: {result_prod.stderr}")
+  >           raise RuntimeError(f"コンパイルエラー: {result_prod.stderr}")
+  E           RuntimeError: コンパイルエラー: /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/src/main.c: In function ‘main’:
+  E           /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/src/main.c:29:9: warning: implicit declaration of function ‘Win_FillRectangle’; did you mean ‘Win_FillRect’? [-Wimplicit-function-declaration]
+  E              29 |         Win_FillRectangle(x, y, x + size, y + size, colors[i]);
+  E                 |         ^~~~~~~~~~~~~~~~~
+  E                 |         Win_FillRect
+  E           /usr/bin/ld: /tmp/cc6UpgCd.o: in function `main':
+  E           main.c:(.text.startup+0x125): undefined reference to `Win_FillRectangle'
+  E           /usr/bin/ld: main.c:(.text.startup+0x194): undefined reference to `Win_FillRectangle'
+  E           collect2: error: ld returned 1 exit status
+  
+  test_exercise_8_3.py:127: RuntimeError
+  ---------------------------- Captured stdout setup -----------------------------
+  
+  ======================================================================
+  🚀 ex8-3-t2500173のテストスイート
+  ======================================================================
+  📁 課題ディレクトリ: /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173
+  📄 テスト対象ソースファイル: main.c
+  🔧 実行ファイル: ex8-3-t2500173_main
+  
+  🔨 コンパイル中（SDL3グラフィックス対応）...
+  
+  ❌ コンパイル失敗:
+  STDERR: /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/src/main.c: In function ‘main’:
+  /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/src/main.c:29:9: warning: implicit declaration of function ‘Win_FillRectangle’; did you mean ‘Win_FillRect’? [-Wimplicit-function-declaration]
+     29 |         Win_FillRectangle(x, y, x + size, y + size, colors[i]);
+        |         ^~~~~~~~~~~~~~~~~
+        |         Win_FillRect
+  /usr/bin/ld: /tmp/cc6UpgCd.o: in function `main':
+  main.c:(.text.startup+0x125): undefined reference to `Win_FillRectangle'
+  /usr/bin/ld: main.c:(.text.startup+0x194): undefined reference to `Win_FillRectangle'
+  collect2: error: ld returned 1 exit status
+  
+  =========================== short test summary info ============================
+  ERROR test_exercise_8_3.py::test_07_variable_declarations - RuntimeError: コンパイルエラー: /home.org/administrator/c-programming-runne...
+  =============================== 1 error in 0.24s ===============================
+  
+❌ テスト7: 変数宣言確認
+::error::Error: Exit with code: 1 and signal: null
+📝 テスト8: 初期値設定確認
+
+
+  ============================= test session starts ==============================
+  platform linux -- Python 3.10.12, pytest-8.4.2, pluggy-1.6.0 -- /usr/bin/python3
+  cachedir: .pytest_cache
+  rootdir: /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/tests
+  collecting ... collected 1 item
+  
+  test_exercise_8_3.py::test_08_initial_values ERROR                       [100%]
+  
+  ==================================== ERRORS ====================================
+  ___________________ ERROR at setup of test_08_initial_values ___________________
+  
+  module = <module 'test_exercise_8_3' from '/home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/tests/test_exercise_8_3.py'>
+  
+      def setup_module(module):
+          """テスト環境のセットアップ（コンパイル含む）"""
+          global exercise_dir, src_file, executable, debug_executable, test_source_file
+      
+          exercise_dir = Path(__file__).parent.parent
+          exercise_name = exercise_dir.name
+      
+          # ソースファイルの決定
+          src_dir = exercise_dir / "src"
+          if not src_dir.exists():
+              raise FileNotFoundError(f"srcディレクトリが見つかりません: {src_dir}")
+      
+          # コマンドライン引数または環境変数からソースファイルを取得
+          parser = argparse.ArgumentParser()
+          parser.add_argument('--source', default=None, help='テストするソースファイル')
+          args, unknown = parser.parse_known_args()
+      
+          source_filename = (
+              args.source or
+              os.environ.get('SOURCE_FILE') or
+              'main.c'
+          )
+      
+          test_source_file = src_dir / source_filename
+      
+          if not test_source_file.exists():
+              raise FileNotFoundError(f"ソースファイルが見つかりません: {test_source_file}")
+      
+          # 実行ファイル名を動的に生成
+          base_name = test_source_file.stem
+          executable = exercise_dir / f"{exercise_name}_{base_name}"
+          debug_executable = exercise_dir / f"{exercise_name}_{base_name}_debug"
+      
+          print(f"\n{'='*70}")
+          print(f"🚀 {exercise_name}のテストスイート")
+          print(f"{'='*70}")
+          print(f"📁 課題ディレクトリ: {exercise_dir}")
+          print(f"📄 テスト対象ソースファイル: {test_source_file.name}")
+          print(f"🔧 実行ファイル: {executable.name}")
+      
+          # コンパイル実行
+  >       _compile_programs()
+  
+  test_exercise_8_3.py:79: 
+  _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+  
+      def _compile_programs():
+          """コンパイル実行（SDL3対応）"""
+          # GraphicsLib.cのパス
+          graphics_lib = exercise_dir / "src" / "GraphicsLib.c"
+      
+          if not graphics_lib.exists():
+              raise FileNotFoundError(f"GraphicsLib.cが見つかりません: {graphics_lib}")
+      
+          # SDL3フラグの検出
+          sdl3_flags = []
+          if os.path.exists("/opt/homebrew/include"):
+              sdl3_flags = ["-I/opt/homebrew/include", "-L/opt/homebrew/lib"]
+          elif os.path.exists("/usr/local/include"):
+              sdl3_flags = ["-I/usr/local/include", "-L/usr/local/lib"]
+      
+          # 本番ビルド
+          production_flags = [
+              "gcc", "-std=c99", "-Wall", "-Wextra", "-O2",
+              str(test_source_file), str(graphics_lib),
+              "-o", str(executable),
+              *sdl3_flags,
+              "-lSDL3", "-lm"
+          ]
+      
+          # デバッグビルド
+          debug_flags = [
+              "gcc", "-std=c99", "-Wall", "-Wextra", "-g", "-O0",
+              "-DDEBUG", str(test_source_file), str(graphics_lib),
+              "-o", str(debug_executable),
+              *sdl3_flags,
+              "-lSDL3", "-lm"
+          ]
+      
+          print(f"\n🔨 コンパイル中（SDL3グラフィックス対応）...")
+          result_prod = subprocess.run(production_flags, capture_output=True, text=True)
+          if result_prod.returncode != 0:
+              print(f"\n❌ コンパイル失敗:")
+              print(f"STDERR: {result_prod.stderr}")
+  >           raise RuntimeError(f"コンパイルエラー: {result_prod.stderr}")
+  E           RuntimeError: コンパイルエラー: /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/src/main.c: In function ‘main’:
+  E           /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/src/main.c:29:9: warning: implicit declaration of function ‘Win_FillRectangle’; did you mean ‘Win_FillRect’? [-Wimplicit-function-declaration]
+  E              29 |         Win_FillRectangle(x, y, x + size, y + size, colors[i]);
+  E                 |         ^~~~~~~~~~~~~~~~~
+  E                 |         Win_FillRect
+  E           /usr/bin/ld: /tmp/ccL4HZZv.o: in function `main':
+  E           main.c:(.text.startup+0x125): undefined reference to `Win_FillRectangle'
+  E           /usr/bin/ld: main.c:(.text.startup+0x194): undefined reference to `Win_FillRectangle'
+  E           collect2: error: ld returned 1 exit status
+  
+  test_exercise_8_3.py:127: RuntimeError
+  ---------------------------- Captured stdout setup -----------------------------
+  
+  ======================================================================
+  🚀 ex8-3-t2500173のテストスイート
+  ======================================================================
+  📁 課題ディレクトリ: /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173
+  📄 テスト対象ソースファイル: main.c
+  🔧 実行ファイル: ex8-3-t2500173_main
+  
+  🔨 コンパイル中（SDL3グラフィックス対応）...
+  
+  ❌ コンパイル失敗:
+  STDERR: /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/src/main.c: In function ‘main’:
+  /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/src/main.c:29:9: warning: implicit declaration of function ‘Win_FillRectangle’; did you mean ‘Win_FillRect’? [-Wimplicit-function-declaration]
+     29 |         Win_FillRectangle(x, y, x + size, y + size, colors[i]);
+        |         ^~~~~~~~~~~~~~~~~
+        |         Win_FillRect
+  /usr/bin/ld: /tmp/ccL4HZZv.o: in function `main':
+  main.c:(.text.startup+0x125): undefined reference to `Win_FillRectangle'
+  /usr/bin/ld: main.c:(.text.startup+0x194): undefined reference to `Win_FillRectangle'
+  collect2: error: ld returned 1 exit status
+  
+  =========================== short test summary info ============================
+  ERROR test_exercise_8_3.py::test_08_initial_values - RuntimeError: コンパイルエラー: /home.org/administrator/c-programming-runne...
+  =============================== 1 error in 0.23s ===============================
+  
+❌ テスト8: 初期値設定確認
+::error::Error: Exit with code: 1 and signal: null
+📝 テスト9: 方向管理確認
+
+
+  ============================= test session starts ==============================
+  platform linux -- Python 3.10.12, pytest-8.4.2, pluggy-1.6.0 -- /usr/bin/python3
+  cachedir: .pytest_cache
+  rootdir: /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/tests
+  collecting ... collected 1 item
+  
+  test_exercise_8_3.py::test_09_direction_management ERROR                 [100%]
+  
+  ==================================== ERRORS ====================================
+  ________________ ERROR at setup of test_09_direction_management ________________
+  
+  module = <module 'test_exercise_8_3' from '/home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/tests/test_exercise_8_3.py'>
+  
+      def setup_module(module):
+          """テスト環境のセットアップ（コンパイル含む）"""
+          global exercise_dir, src_file, executable, debug_executable, test_source_file
+      
+          exercise_dir = Path(__file__).parent.parent
+          exercise_name = exercise_dir.name
+      
+          # ソースファイルの決定
+          src_dir = exercise_dir / "src"
+          if not src_dir.exists():
+              raise FileNotFoundError(f"srcディレクトリが見つかりません: {src_dir}")
+      
+          # コマンドライン引数または環境変数からソースファイルを取得
+          parser = argparse.ArgumentParser()
+          parser.add_argument('--source', default=None, help='テストするソースファイル')
+          args, unknown = parser.parse_known_args()
+      
+          source_filename = (
+              args.source or
+              os.environ.get('SOURCE_FILE') or
+              'main.c'
+          )
+      
+          test_source_file = src_dir / source_filename
+      
+          if not test_source_file.exists():
+              raise FileNotFoundError(f"ソースファイルが見つかりません: {test_source_file}")
+      
+          # 実行ファイル名を動的に生成
+          base_name = test_source_file.stem
+          executable = exercise_dir / f"{exercise_name}_{base_name}"
+          debug_executable = exercise_dir / f"{exercise_name}_{base_name}_debug"
+      
+          print(f"\n{'='*70}")
+          print(f"🚀 {exercise_name}のテストスイート")
+          print(f"{'='*70}")
+          print(f"📁 課題ディレクトリ: {exercise_dir}")
+          print(f"📄 テスト対象ソースファイル: {test_source_file.name}")
+          print(f"🔧 実行ファイル: {executable.name}")
+      
+          # コンパイル実行
+  >       _compile_programs()
+  
+  test_exercise_8_3.py:79: 
+  _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+  
+      def _compile_programs():
+          """コンパイル実行（SDL3対応）"""
+          # GraphicsLib.cのパス
+          graphics_lib = exercise_dir / "src" / "GraphicsLib.c"
+      
+          if not graphics_lib.exists():
+              raise FileNotFoundError(f"GraphicsLib.cが見つかりません: {graphics_lib}")
+      
+          # SDL3フラグの検出
+          sdl3_flags = []
+          if os.path.exists("/opt/homebrew/include"):
+              sdl3_flags = ["-I/opt/homebrew/include", "-L/opt/homebrew/lib"]
+          elif os.path.exists("/usr/local/include"):
+              sdl3_flags = ["-I/usr/local/include", "-L/usr/local/lib"]
+      
+          # 本番ビルド
+          production_flags = [
+              "gcc", "-std=c99", "-Wall", "-Wextra", "-O2",
+              str(test_source_file), str(graphics_lib),
+              "-o", str(executable),
+              *sdl3_flags,
+              "-lSDL3", "-lm"
+          ]
+      
+          # デバッグビルド
+          debug_flags = [
+              "gcc", "-std=c99", "-Wall", "-Wextra", "-g", "-O0",
+              "-DDEBUG", str(test_source_file), str(graphics_lib),
+              "-o", str(debug_executable),
+              *sdl3_flags,
+              "-lSDL3", "-lm"
+          ]
+      
+          print(f"\n🔨 コンパイル中（SDL3グラフィックス対応）...")
+          result_prod = subprocess.run(production_flags, capture_output=True, text=True)
+          if result_prod.returncode != 0:
+              print(f"\n❌ コンパイル失敗:")
+              print(f"STDERR: {result_prod.stderr}")
+  >           raise RuntimeError(f"コンパイルエラー: {result_prod.stderr}")
+  E           RuntimeError: コンパイルエラー: /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/src/main.c: In function ‘main’:
+  E           /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/src/main.c:29:9: warning: implicit declaration of function ‘Win_FillRectangle’; did you mean ‘Win_FillRect’? [-Wimplicit-function-declaration]
+  E              29 |         Win_FillRectangle(x, y, x + size, y + size, colors[i]);
+  E                 |         ^~~~~~~~~~~~~~~~~
+  E                 |         Win_FillRect
+  E           /usr/bin/ld: /tmp/ccbDMe1A.o: in function `main':
+  E           main.c:(.text.startup+0x125): undefined reference to `Win_FillRectangle'
+  E           /usr/bin/ld: main.c:(.text.startup+0x194): undefined reference to `Win_FillRectangle'
+  E           collect2: error: ld returned 1 exit status
+  
+  test_exercise_8_3.py:127: RuntimeError
+  ---------------------------- Captured stdout setup -----------------------------
+  
+  ======================================================================
+  🚀 ex8-3-t2500173のテストスイート
+  ======================================================================
+  📁 課題ディレクトリ: /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173
+  📄 テスト対象ソースファイル: main.c
+  🔧 実行ファイル: ex8-3-t2500173_main
+  
+  🔨 コンパイル中（SDL3グラフィックス対応）...
+  
+  ❌ コンパイル失敗:
+  STDERR: /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/src/main.c: In function ‘main’:
+  /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/src/main.c:29:9: warning: implicit declaration of function ‘Win_FillRectangle’; did you mean ‘Win_FillRect’? [-Wimplicit-function-declaration]
+     29 |         Win_FillRectangle(x, y, x + size, y + size, colors[i]);
+        |         ^~~~~~~~~~~~~~~~~
+        |         Win_FillRect
+  /usr/bin/ld: /tmp/ccbDMe1A.o: in function `main':
+  main.c:(.text.startup+0x125): undefined reference to `Win_FillRectangle'
+  /usr/bin/ld: main.c:(.text.startup+0x194): undefined reference to `Win_FillRectangle'
+  collect2: error: ld returned 1 exit status
+  
+  =========================== short test summary info ============================
+  ERROR test_exercise_8_3.py::test_09_direction_management - RuntimeError: コンパイルエラー: /home.org/administrator/c-programming-runne...
+  =============================== 1 error in 0.22s ===============================
+  
+❌ テスト9: 方向管理確認
+::error::Error: Exit with code: 1 and signal: null
+📝 テスト9.5: 座標更新確認
+
+
+  ============================= test session starts ==============================
+  platform linux -- Python 3.10.12, pytest-8.4.2, pluggy-1.6.0 -- /usr/bin/python3
+  cachedir: .pytest_cache
+  rootdir: /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/tests
+  collecting ... collected 1 item
+  
+  test_exercise_8_3.py::test_09_5_coordinate_updates ERROR                 [100%]
+  
+  ==================================== ERRORS ====================================
+  ________________ ERROR at setup of test_09_5_coordinate_updates ________________
+  
+  module = <module 'test_exercise_8_3' from '/home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/tests/test_exercise_8_3.py'>
+  
+      def setup_module(module):
+          """テスト環境のセットアップ（コンパイル含む）"""
+          global exercise_dir, src_file, executable, debug_executable, test_source_file
+      
+          exercise_dir = Path(__file__).parent.parent
+          exercise_name = exercise_dir.name
+      
+          # ソースファイルの決定
+          src_dir = exercise_dir / "src"
+          if not src_dir.exists():
+              raise FileNotFoundError(f"srcディレクトリが見つかりません: {src_dir}")
+      
+          # コマンドライン引数または環境変数からソースファイルを取得
+          parser = argparse.ArgumentParser()
+          parser.add_argument('--source', default=None, help='テストするソースファイル')
+          args, unknown = parser.parse_known_args()
+      
+          source_filename = (
+              args.source or
+              os.environ.get('SOURCE_FILE') or
+              'main.c'
+          )
+      
+          test_source_file = src_dir / source_filename
+      
+          if not test_source_file.exists():
+              raise FileNotFoundError(f"ソースファイルが見つかりません: {test_source_file}")
+      
+          # 実行ファイル名を動的に生成
+          base_name = test_source_file.stem
+          executable = exercise_dir / f"{exercise_name}_{base_name}"
+          debug_executable = exercise_dir / f"{exercise_name}_{base_name}_debug"
+      
+          print(f"\n{'='*70}")
+          print(f"🚀 {exercise_name}のテストスイート")
+          print(f"{'='*70}")
+          print(f"📁 課題ディレクトリ: {exercise_dir}")
+          print(f"📄 テスト対象ソースファイル: {test_source_file.name}")
+          print(f"🔧 実行ファイル: {executable.name}")
+      
+          # コンパイル実行
+  >       _compile_programs()
+  
+  test_exercise_8_3.py:79: 
+  _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+  
+      def _compile_programs():
+          """コンパイル実行（SDL3対応）"""
+          # GraphicsLib.cのパス
+          graphics_lib = exercise_dir / "src" / "GraphicsLib.c"
+      
+          if not graphics_lib.exists():
+              raise FileNotFoundError(f"GraphicsLib.cが見つかりません: {graphics_lib}")
+      
+          # SDL3フラグの検出
+          sdl3_flags = []
+          if os.path.exists("/opt/homebrew/include"):
+              sdl3_flags = ["-I/opt/homebrew/include", "-L/opt/homebrew/lib"]
+          elif os.path.exists("/usr/local/include"):
+              sdl3_flags = ["-I/usr/local/include", "-L/usr/local/lib"]
+      
+          # 本番ビルド
+          production_flags = [
+              "gcc", "-std=c99", "-Wall", "-Wextra", "-O2",
+              str(test_source_file), str(graphics_lib),
+              "-o", str(executable),
+              *sdl3_flags,
+              "-lSDL3", "-lm"
+          ]
+      
+          # デバッグビルド
+          debug_flags = [
+              "gcc", "-std=c99", "-Wall", "-Wextra", "-g", "-O0",
+              "-DDEBUG", str(test_source_file), str(graphics_lib),
+              "-o", str(debug_executable),
+              *sdl3_flags,
+              "-lSDL3", "-lm"
+          ]
+      
+          print(f"\n🔨 コンパイル中（SDL3グラフィックス対応）...")
+          result_prod = subprocess.run(production_flags, capture_output=True, text=True)
+          if result_prod.returncode != 0:
+              print(f"\n❌ コンパイル失敗:")
+              print(f"STDERR: {result_prod.stderr}")
+  >           raise RuntimeError(f"コンパイルエラー: {result_prod.stderr}")
+  E           RuntimeError: コンパイルエラー: /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/src/main.c: In function ‘main’:
+  E           /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/src/main.c:29:9: warning: implicit declaration of function ‘Win_FillRectangle’; did you mean ‘Win_FillRect’? [-Wimplicit-function-declaration]
+  E              29 |         Win_FillRectangle(x, y, x + size, y + size, colors[i]);
+  E                 |         ^~~~~~~~~~~~~~~~~
+  E                 |         Win_FillRect
+  E           /usr/bin/ld: /tmp/ccpKUUf7.o: in function `main':
+  E           main.c:(.text.startup+0x125): undefined reference to `Win_FillRectangle'
+  E           /usr/bin/ld: main.c:(.text.startup+0x194): undefined reference to `Win_FillRectangle'
+  E           collect2: error: ld returned 1 exit status
+  
+  test_exercise_8_3.py:127: RuntimeError
+  ---------------------------- Captured stdout setup -----------------------------
+  
+  ======================================================================
+  🚀 ex8-3-t2500173のテストスイート
+  ======================================================================
+  📁 課題ディレクトリ: /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173
+  📄 テスト対象ソースファイル: main.c
+  🔧 実行ファイル: ex8-3-t2500173_main
+  
+  🔨 コンパイル中（SDL3グラフィックス対応）...
+  
+  ❌ コンパイル失敗:
+  STDERR: /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/src/main.c: In function ‘main’:
+  /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/src/main.c:29:9: warning: implicit declaration of function ‘Win_FillRectangle’; did you mean ‘Win_FillRect’? [-Wimplicit-function-declaration]
+     29 |         Win_FillRectangle(x, y, x + size, y + size, colors[i]);
+        |         ^~~~~~~~~~~~~~~~~
+        |         Win_FillRect
+  /usr/bin/ld: /tmp/ccpKUUf7.o: in function `main':
+  main.c:(.text.startup+0x125): undefined reference to `Win_FillRectangle'
+  /usr/bin/ld: main.c:(.text.startup+0x194): undefined reference to `Win_FillRectangle'
+  collect2: error: ld returned 1 exit status
+  
+  =========================== short test summary info ============================
+  ERROR test_exercise_8_3.py::test_09_5_coordinate_updates - RuntimeError: コンパイルエラー: /home.org/administrator/c-programming-runne...
+  =============================== 1 error in 0.23s ===============================
+  
+❌ テスト9.5: 座標更新確認
+::error::Error: Exit with code: 1 and signal: null
+📝 テスト10: 色の使用確認
+
+
+  ============================= test session starts ==============================
+  platform linux -- Python 3.10.12, pytest-8.4.2, pluggy-1.6.0 -- /usr/bin/python3
+  cachedir: .pytest_cache
+  rootdir: /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/tests
+  collecting ... collected 1 item
+  
+  test_exercise_8_3.py::test_10_color_usage ERROR                          [100%]
+  
+  ==================================== ERRORS ====================================
+  ____________________ ERROR at setup of test_10_color_usage _____________________
+  
+  module = <module 'test_exercise_8_3' from '/home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/tests/test_exercise_8_3.py'>
+  
+      def setup_module(module):
+          """テスト環境のセットアップ（コンパイル含む）"""
+          global exercise_dir, src_file, executable, debug_executable, test_source_file
+      
+          exercise_dir = Path(__file__).parent.parent
+          exercise_name = exercise_dir.name
+      
+          # ソースファイルの決定
+          src_dir = exercise_dir / "src"
+          if not src_dir.exists():
+              raise FileNotFoundError(f"srcディレクトリが見つかりません: {src_dir}")
+      
+          # コマンドライン引数または環境変数からソースファイルを取得
+          parser = argparse.ArgumentParser()
+          parser.add_argument('--source', default=None, help='テストするソースファイル')
+          args, unknown = parser.parse_known_args()
+      
+          source_filename = (
+              args.source or
+              os.environ.get('SOURCE_FILE') or
+              'main.c'
+          )
+      
+          test_source_file = src_dir / source_filename
+      
+          if not test_source_file.exists():
+              raise FileNotFoundError(f"ソースファイルが見つかりません: {test_source_file}")
+      
+          # 実行ファイル名を動的に生成
+          base_name = test_source_file.stem
+          executable = exercise_dir / f"{exercise_name}_{base_name}"
+          debug_executable = exercise_dir / f"{exercise_name}_{base_name}_debug"
+      
+          print(f"\n{'='*70}")
+          print(f"🚀 {exercise_name}のテストスイート")
+          print(f"{'='*70}")
+          print(f"📁 課題ディレクトリ: {exercise_dir}")
+          print(f"📄 テスト対象ソースファイル: {test_source_file.name}")
+          print(f"🔧 実行ファイル: {executable.name}")
+      
+          # コンパイル実行
+  >       _compile_programs()
+  
+  test_exercise_8_3.py:79: 
+  _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+  
+      def _compile_programs():
+          """コンパイル実行（SDL3対応）"""
+          # GraphicsLib.cのパス
+          graphics_lib = exercise_dir / "src" / "GraphicsLib.c"
+      
+          if not graphics_lib.exists():
+              raise FileNotFoundError(f"GraphicsLib.cが見つかりません: {graphics_lib}")
+      
+          # SDL3フラグの検出
+          sdl3_flags = []
+          if os.path.exists("/opt/homebrew/include"):
+              sdl3_flags = ["-I/opt/homebrew/include", "-L/opt/homebrew/lib"]
+          elif os.path.exists("/usr/local/include"):
+              sdl3_flags = ["-I/usr/local/include", "-L/usr/local/lib"]
+      
+          # 本番ビルド
+          production_flags = [
+              "gcc", "-std=c99", "-Wall", "-Wextra", "-O2",
+              str(test_source_file), str(graphics_lib),
+              "-o", str(executable),
+              *sdl3_flags,
+              "-lSDL3", "-lm"
+          ]
+      
+          # デバッグビルド
+          debug_flags = [
+              "gcc", "-std=c99", "-Wall", "-Wextra", "-g", "-O0",
+              "-DDEBUG", str(test_source_file), str(graphics_lib),
+              "-o", str(debug_executable),
+              *sdl3_flags,
+              "-lSDL3", "-lm"
+          ]
+      
+          print(f"\n🔨 コンパイル中（SDL3グラフィックス対応）...")
+          result_prod = subprocess.run(production_flags, capture_output=True, text=True)
+          if result_prod.returncode != 0:
+              print(f"\n❌ コンパイル失敗:")
+              print(f"STDERR: {result_prod.stderr}")
+  >           raise RuntimeError(f"コンパイルエラー: {result_prod.stderr}")
+  E           RuntimeError: コンパイルエラー: /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/src/main.c: In function ‘main’:
+  E           /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/src/main.c:29:9: warning: implicit declaration of function ‘Win_FillRectangle’; did you mean ‘Win_FillRect’? [-Wimplicit-function-declaration]
+  E              29 |         Win_FillRectangle(x, y, x + size, y + size, colors[i]);
+  E                 |         ^~~~~~~~~~~~~~~~~
+  E                 |         Win_FillRect
+  E           /usr/bin/ld: /tmp/ccgrZuRf.o: in function `main':
+  E           main.c:(.text.startup+0x125): undefined reference to `Win_FillRectangle'
+  E           /usr/bin/ld: main.c:(.text.startup+0x194): undefined reference to `Win_FillRectangle'
+  E           collect2: error: ld returned 1 exit status
+  
+  test_exercise_8_3.py:127: RuntimeError
+  ---------------------------- Captured stdout setup -----------------------------
+  
+  ======================================================================
+  🚀 ex8-3-t2500173のテストスイート
+  ======================================================================
+  📁 課題ディレクトリ: /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173
+  📄 テスト対象ソースファイル: main.c
+  🔧 実行ファイル: ex8-3-t2500173_main
+  
+  🔨 コンパイル中（SDL3グラフィックス対応）...
+  
+  ❌ コンパイル失敗:
+  STDERR: /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/src/main.c: In function ‘main’:
+  /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/src/main.c:29:9: warning: implicit declaration of function ‘Win_FillRectangle’; did you mean ‘Win_FillRect’? [-Wimplicit-function-declaration]
+     29 |         Win_FillRectangle(x, y, x + size, y + size, colors[i]);
+        |         ^~~~~~~~~~~~~~~~~
+        |         Win_FillRect
+  /usr/bin/ld: /tmp/ccgrZuRf.o: in function `main':
+  main.c:(.text.startup+0x125): undefined reference to `Win_FillRectangle'
+  /usr/bin/ld: main.c:(.text.startup+0x194): undefined reference to `Win_FillRectangle'
+  collect2: error: ld returned 1 exit status
+  
+  =========================== short test summary info ============================
+  ERROR test_exercise_8_3.py::test_10_color_usage - RuntimeError: コンパイルエラー: /home.org/administrator/c-programming-runne...
+  =============================== 1 error in 0.24s ===============================
+  
+❌ テスト10: 色の使用確認
+::error::Error: Exit with code: 1 and signal: null
+📝 テスト11: スケール設定確認
+
+
+  ============================= test session starts ==============================
+  platform linux -- Python 3.10.12, pytest-8.4.2, pluggy-1.6.0 -- /usr/bin/python3
+  cachedir: .pytest_cache
+  rootdir: /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/tests
+  collecting ... collected 1 item
+  
+  test_exercise_8_3.py::test_11_scale_setting ERROR                        [100%]
+  
+  ==================================== ERRORS ====================================
+  ___________________ ERROR at setup of test_11_scale_setting ____________________
+  
+  module = <module 'test_exercise_8_3' from '/home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/tests/test_exercise_8_3.py'>
+  
+      def setup_module(module):
+          """テスト環境のセットアップ（コンパイル含む）"""
+          global exercise_dir, src_file, executable, debug_executable, test_source_file
+      
+          exercise_dir = Path(__file__).parent.parent
+          exercise_name = exercise_dir.name
+      
+          # ソースファイルの決定
+          src_dir = exercise_dir / "src"
+          if not src_dir.exists():
+              raise FileNotFoundError(f"srcディレクトリが見つかりません: {src_dir}")
+      
+          # コマンドライン引数または環境変数からソースファイルを取得
+          parser = argparse.ArgumentParser()
+          parser.add_argument('--source', default=None, help='テストするソースファイル')
+          args, unknown = parser.parse_known_args()
+      
+          source_filename = (
+              args.source or
+              os.environ.get('SOURCE_FILE') or
+              'main.c'
+          )
+      
+          test_source_file = src_dir / source_filename
+      
+          if not test_source_file.exists():
+              raise FileNotFoundError(f"ソースファイルが見つかりません: {test_source_file}")
+      
+          # 実行ファイル名を動的に生成
+          base_name = test_source_file.stem
+          executable = exercise_dir / f"{exercise_name}_{base_name}"
+          debug_executable = exercise_dir / f"{exercise_name}_{base_name}_debug"
+      
+          print(f"\n{'='*70}")
+          print(f"🚀 {exercise_name}のテストスイート")
+          print(f"{'='*70}")
+          print(f"📁 課題ディレクトリ: {exercise_dir}")
+          print(f"📄 テスト対象ソースファイル: {test_source_file.name}")
+          print(f"🔧 実行ファイル: {executable.name}")
+      
+          # コンパイル実行
+  >       _compile_programs()
+  
+  test_exercise_8_3.py:79: 
+  _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+  
+      def _compile_programs():
+          """コンパイル実行（SDL3対応）"""
+          # GraphicsLib.cのパス
+          graphics_lib = exercise_dir / "src" / "GraphicsLib.c"
+      
+          if not graphics_lib.exists():
+              raise FileNotFoundError(f"GraphicsLib.cが見つかりません: {graphics_lib}")
+      
+          # SDL3フラグの検出
+          sdl3_flags = []
+          if os.path.exists("/opt/homebrew/include"):
+              sdl3_flags = ["-I/opt/homebrew/include", "-L/opt/homebrew/lib"]
+          elif os.path.exists("/usr/local/include"):
+              sdl3_flags = ["-I/usr/local/include", "-L/usr/local/lib"]
+      
+          # 本番ビルド
+          production_flags = [
+              "gcc", "-std=c99", "-Wall", "-Wextra", "-O2",
+              str(test_source_file), str(graphics_lib),
+              "-o", str(executable),
+              *sdl3_flags,
+              "-lSDL3", "-lm"
+          ]
+      
+          # デバッグビルド
+          debug_flags = [
+              "gcc", "-std=c99", "-Wall", "-Wextra", "-g", "-O0",
+              "-DDEBUG", str(test_source_file), str(graphics_lib),
+              "-o", str(debug_executable),
+              *sdl3_flags,
+              "-lSDL3", "-lm"
+          ]
+      
+          print(f"\n🔨 コンパイル中（SDL3グラフィックス対応）...")
+          result_prod = subprocess.run(production_flags, capture_output=True, text=True)
+          if result_prod.returncode != 0:
+              print(f"\n❌ コンパイル失敗:")
+              print(f"STDERR: {result_prod.stderr}")
+  >           raise RuntimeError(f"コンパイルエラー: {result_prod.stderr}")
+  E           RuntimeError: コンパイルエラー: /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/src/main.c: In function ‘main’:
+  E           /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/src/main.c:29:9: warning: implicit declaration of function ‘Win_FillRectangle’; did you mean ‘Win_FillRect’? [-Wimplicit-function-declaration]
+  E              29 |         Win_FillRectangle(x, y, x + size, y + size, colors[i]);
+  E                 |         ^~~~~~~~~~~~~~~~~
+  E                 |         Win_FillRect
+  E           /usr/bin/ld: /tmp/cc1xiJld.o: in function `main':
+  E           main.c:(.text.startup+0x125): undefined reference to `Win_FillRectangle'
+  E           /usr/bin/ld: main.c:(.text.startup+0x194): undefined reference to `Win_FillRectangle'
+  E           collect2: error: ld returned 1 exit status
+  
+  test_exercise_8_3.py:127: RuntimeError
+  ---------------------------- Captured stdout setup -----------------------------
+  
+  ======================================================================
+  🚀 ex8-3-t2500173のテストスイート
+  ======================================================================
+  📁 課題ディレクトリ: /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173
+  📄 テスト対象ソースファイル: main.c
+  🔧 実行ファイル: ex8-3-t2500173_main
+  
+  🔨 コンパイル中（SDL3グラフィックス対応）...
+  
+  ❌ コンパイル失敗:
+  STDERR: /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/src/main.c: In function ‘main’:
+  /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/src/main.c:29:9: warning: implicit declaration of function ‘Win_FillRectangle’; did you mean ‘Win_FillRect’? [-Wimplicit-function-declaration]
+     29 |         Win_FillRectangle(x, y, x + size, y + size, colors[i]);
+        |         ^~~~~~~~~~~~~~~~~
+        |         Win_FillRect
+  /usr/bin/ld: /tmp/cc1xiJld.o: in function `main':
+  main.c:(.text.startup+0x125): undefined reference to `Win_FillRectangle'
+  /usr/bin/ld: main.c:(.text.startup+0x194): undefined reference to `Win_FillRectangle'
+  collect2: error: ld returned 1 exit status
+  
+  =========================== short test summary info ============================
+  ERROR test_exercise_8_3.py::test_11_scale_setting - RuntimeError: コンパイルエラー: /home.org/administrator/c-programming-runne...
+  =============================== 1 error in 0.23s ===============================
+  
+❌ テスト11: スケール設定確認
+::error::Error: Exit with code: 1 and signal: null
+📝 テスト12: 項数設定確認
+
+
+  ============================= test session starts ==============================
+  platform linux -- Python 3.10.12, pytest-8.4.2, pluggy-1.6.0 -- /usr/bin/python3
+  cachedir: .pytest_cache
+  rootdir: /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/tests
+  collecting ... collected 1 item
+  
+  test_exercise_8_3.py::test_12_term_count ERROR                           [100%]
+  
+  ==================================== ERRORS ====================================
+  _____________________ ERROR at setup of test_12_term_count _____________________
+  
+  module = <module 'test_exercise_8_3' from '/home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/tests/test_exercise_8_3.py'>
+  
+      def setup_module(module):
+          """テスト環境のセットアップ（コンパイル含む）"""
+          global exercise_dir, src_file, executable, debug_executable, test_source_file
+      
+          exercise_dir = Path(__file__).parent.parent
+          exercise_name = exercise_dir.name
+      
+          # ソースファイルの決定
+          src_dir = exercise_dir / "src"
+          if not src_dir.exists():
+              raise FileNotFoundError(f"srcディレクトリが見つかりません: {src_dir}")
+      
+          # コマンドライン引数または環境変数からソースファイルを取得
+          parser = argparse.ArgumentParser()
+          parser.add_argument('--source', default=None, help='テストするソースファイル')
+          args, unknown = parser.parse_known_args()
+      
+          source_filename = (
+              args.source or
+              os.environ.get('SOURCE_FILE') or
+              'main.c'
+          )
+      
+          test_source_file = src_dir / source_filename
+      
+          if not test_source_file.exists():
+              raise FileNotFoundError(f"ソースファイルが見つかりません: {test_source_file}")
+      
+          # 実行ファイル名を動的に生成
+          base_name = test_source_file.stem
+          executable = exercise_dir / f"{exercise_name}_{base_name}"
+          debug_executable = exercise_dir / f"{exercise_name}_{base_name}_debug"
+      
+          print(f"\n{'='*70}")
+          print(f"🚀 {exercise_name}のテストスイート")
+          print(f"{'='*70}")
+          print(f"📁 課題ディレクトリ: {exercise_dir}")
+          print(f"📄 テスト対象ソースファイル: {test_source_file.name}")
+          print(f"🔧 実行ファイル: {executable.name}")
+      
+          # コンパイル実行
+  >       _compile_programs()
+  
+  test_exercise_8_3.py:79: 
+  _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+  
+      def _compile_programs():
+          """コンパイル実行（SDL3対応）"""
+          # GraphicsLib.cのパス
+          graphics_lib = exercise_dir / "src" / "GraphicsLib.c"
+      
+          if not graphics_lib.exists():
+              raise FileNotFoundError(f"GraphicsLib.cが見つかりません: {graphics_lib}")
+      
+          # SDL3フラグの検出
+          sdl3_flags = []
+          if os.path.exists("/opt/homebrew/include"):
+              sdl3_flags = ["-I/opt/homebrew/include", "-L/opt/homebrew/lib"]
+          elif os.path.exists("/usr/local/include"):
+              sdl3_flags = ["-I/usr/local/include", "-L/usr/local/lib"]
+      
+          # 本番ビルド
+          production_flags = [
+              "gcc", "-std=c99", "-Wall", "-Wextra", "-O2",
+              str(test_source_file), str(graphics_lib),
+              "-o", str(executable),
+              *sdl3_flags,
+              "-lSDL3", "-lm"
+          ]
+      
+          # デバッグビルド
+          debug_flags = [
+              "gcc", "-std=c99", "-Wall", "-Wextra", "-g", "-O0",
+              "-DDEBUG", str(test_source_file), str(graphics_lib),
+              "-o", str(debug_executable),
+              *sdl3_flags,
+              "-lSDL3", "-lm"
+          ]
+      
+          print(f"\n🔨 コンパイル中（SDL3グラフィックス対応）...")
+          result_prod = subprocess.run(production_flags, capture_output=True, text=True)
+          if result_prod.returncode != 0:
+              print(f"\n❌ コンパイル失敗:")
+              print(f"STDERR: {result_prod.stderr}")
+  >           raise RuntimeError(f"コンパイルエラー: {result_prod.stderr}")
+  E           RuntimeError: コンパイルエラー: /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/src/main.c: In function ‘main’:
+  E           /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/src/main.c:29:9: warning: implicit declaration of function ‘Win_FillRectangle’; did you mean ‘Win_FillRect’? [-Wimplicit-function-declaration]
+  E              29 |         Win_FillRectangle(x, y, x + size, y + size, colors[i]);
+  E                 |         ^~~~~~~~~~~~~~~~~
+  E                 |         Win_FillRect
+  E           /usr/bin/ld: /tmp/cco5s7g4.o: in function `main':
+  E           main.c:(.text.startup+0x125): undefined reference to `Win_FillRectangle'
+  E           /usr/bin/ld: main.c:(.text.startup+0x194): undefined reference to `Win_FillRectangle'
+  E           collect2: error: ld returned 1 exit status
+  
+  test_exercise_8_3.py:127: RuntimeError
+  ---------------------------- Captured stdout setup -----------------------------
+  
+  ======================================================================
+  🚀 ex8-3-t2500173のテストスイート
+  ======================================================================
+  📁 課題ディレクトリ: /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173
+  📄 テスト対象ソースファイル: main.c
+  🔧 実行ファイル: ex8-3-t2500173_main
+  
+  🔨 コンパイル中（SDL3グラフィックス対応）...
+  
+  ❌ コンパイル失敗:
+  STDERR: /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/src/main.c: In function ‘main’:
+  /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/src/main.c:29:9: warning: implicit declaration of function ‘Win_FillRectangle’; did you mean ‘Win_FillRect’? [-Wimplicit-function-declaration]
+     29 |         Win_FillRectangle(x, y, x + size, y + size, colors[i]);
+        |         ^~~~~~~~~~~~~~~~~
+        |         Win_FillRect
+  /usr/bin/ld: /tmp/cco5s7g4.o: in function `main':
+  main.c:(.text.startup+0x125): undefined reference to `Win_FillRectangle'
+  /usr/bin/ld: main.c:(.text.startup+0x194): undefined reference to `Win_FillRectangle'
+  collect2: error: ld returned 1 exit status
+  
+  =========================== short test summary info ============================
+  ERROR test_exercise_8_3.py::test_12_term_count - RuntimeError: コンパイルエラー: /home.org/administrator/c-programming-runne...
+  =============================== 1 error in 0.24s ===============================
+  
+❌ テスト12: 項数設定確認
+::error::Error: Exit with code: 1 and signal: null
+📝 テスト13: ヘッダーファイルインクルード確認
+
+
+  ============================= test session starts ==============================
+  platform linux -- Python 3.10.12, pytest-8.4.2, pluggy-1.6.0 -- /usr/bin/python3
+  cachedir: .pytest_cache
+  rootdir: /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/tests
+  collecting ... collected 1 item
+  
+  test_exercise_8_3.py::test_13_header_includes ERROR                      [100%]
+  
+  ==================================== ERRORS ====================================
+  __________________ ERROR at setup of test_13_header_includes ___________________
+  
+  module = <module 'test_exercise_8_3' from '/home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/tests/test_exercise_8_3.py'>
+  
+      def setup_module(module):
+          """テスト環境のセットアップ（コンパイル含む）"""
+          global exercise_dir, src_file, executable, debug_executable, test_source_file
+      
+          exercise_dir = Path(__file__).parent.parent
+          exercise_name = exercise_dir.name
+      
+          # ソースファイルの決定
+          src_dir = exercise_dir / "src"
+          if not src_dir.exists():
+              raise FileNotFoundError(f"srcディレクトリが見つかりません: {src_dir}")
+      
+          # コマンドライン引数または環境変数からソースファイルを取得
+          parser = argparse.ArgumentParser()
+          parser.add_argument('--source', default=None, help='テストするソースファイル')
+          args, unknown = parser.parse_known_args()
+      
+          source_filename = (
+              args.source or
+              os.environ.get('SOURCE_FILE') or
+              'main.c'
+          )
+      
+          test_source_file = src_dir / source_filename
+      
+          if not test_source_file.exists():
+              raise FileNotFoundError(f"ソースファイルが見つかりません: {test_source_file}")
+      
+          # 実行ファイル名を動的に生成
+          base_name = test_source_file.stem
+          executable = exercise_dir / f"{exercise_name}_{base_name}"
+          debug_executable = exercise_dir / f"{exercise_name}_{base_name}_debug"
+      
+          print(f"\n{'='*70}")
+          print(f"🚀 {exercise_name}のテストスイート")
+          print(f"{'='*70}")
+          print(f"📁 課題ディレクトリ: {exercise_dir}")
+          print(f"📄 テスト対象ソースファイル: {test_source_file.name}")
+          print(f"🔧 実行ファイル: {executable.name}")
+      
+          # コンパイル実行
+  >       _compile_programs()
+  
+  test_exercise_8_3.py:79: 
+  _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+  
+      def _compile_programs():
+          """コンパイル実行（SDL3対応）"""
+          # GraphicsLib.cのパス
+          graphics_lib = exercise_dir / "src" / "GraphicsLib.c"
+      
+          if not graphics_lib.exists():
+              raise FileNotFoundError(f"GraphicsLib.cが見つかりません: {graphics_lib}")
+      
+          # SDL3フラグの検出
+          sdl3_flags = []
+          if os.path.exists("/opt/homebrew/include"):
+              sdl3_flags = ["-I/opt/homebrew/include", "-L/opt/homebrew/lib"]
+          elif os.path.exists("/usr/local/include"):
+              sdl3_flags = ["-I/usr/local/include", "-L/usr/local/lib"]
+      
+          # 本番ビルド
+          production_flags = [
+              "gcc", "-std=c99", "-Wall", "-Wextra", "-O2",
+              str(test_source_file), str(graphics_lib),
+              "-o", str(executable),
+              *sdl3_flags,
+              "-lSDL3", "-lm"
+          ]
+      
+          # デバッグビルド
+          debug_flags = [
+              "gcc", "-std=c99", "-Wall", "-Wextra", "-g", "-O0",
+              "-DDEBUG", str(test_source_file), str(graphics_lib),
+              "-o", str(debug_executable),
+              *sdl3_flags,
+              "-lSDL3", "-lm"
+          ]
+      
+          print(f"\n🔨 コンパイル中（SDL3グラフィックス対応）...")
+          result_prod = subprocess.run(production_flags, capture_output=True, text=True)
+          if result_prod.returncode != 0:
+              print(f"\n❌ コンパイル失敗:")
+              print(f"STDERR: {result_prod.stderr}")
+  >           raise RuntimeError(f"コンパイルエラー: {result_prod.stderr}")
+  E           RuntimeError: コンパイルエラー: /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/src/main.c: In function ‘main’:
+  E           /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/src/main.c:29:9: warning: implicit declaration of function ‘Win_FillRectangle’; did you mean ‘Win_FillRect’? [-Wimplicit-function-declaration]
+  E              29 |         Win_FillRectangle(x, y, x + size, y + size, colors[i]);
+  E                 |         ^~~~~~~~~~~~~~~~~
+  E                 |         Win_FillRect
+  E           /usr/bin/ld: /tmp/ccOqViiz.o: in function `main':
+  E           main.c:(.text.startup+0x125): undefined reference to `Win_FillRectangle'
+  E           /usr/bin/ld: main.c:(.text.startup+0x194): undefined reference to `Win_FillRectangle'
+  E           collect2: error: ld returned 1 exit status
+  
+  test_exercise_8_3.py:127: RuntimeError
+  ---------------------------- Captured stdout setup -----------------------------
+  
+  ======================================================================
+  🚀 ex8-3-t2500173のテストスイート
+  ======================================================================
+  📁 課題ディレクトリ: /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173
+  📄 テスト対象ソースファイル: main.c
+  🔧 実行ファイル: ex8-3-t2500173_main
+  
+  🔨 コンパイル中（SDL3グラフィックス対応）...
+  
+  ❌ コンパイル失敗:
+  STDERR: /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/src/main.c: In function ‘main’:
+  /home.org/administrator/c-programming-runners/actions-runner1/_work/ex8-3-t2500173/ex8-3-t2500173/src/main.c:29:9: warning: implicit declaration of function ‘Win_FillRectangle’; did you mean ‘Win_FillRect’? [-Wimplicit-function-declaration]
+     29 |         Win_FillRectangle(x, y, x + size, y + size, colors[i]);
+        |         ^~~~~~~~~~~~~~~~~
+        |         Win_FillRect
+  /usr/bin/ld: /tmp/ccOqViiz.o: in function `main':
+  main.c:(.text.startup+0x125): undefined reference to `Win_FillRectangle'
+  /usr/bin/ld: main.c:(.text.startup+0x194): undefined reference to `Win_FillRectangle'
+  collect2: error: ld returned 1 exit status
+  
+  =========================== short test summary info ============================
+  ERROR test_exercise_8_3.py::test_13_header_includes - RuntimeError: コンパイルエラー: /home.org/administrator/c-programming-runne...
+  =============================== 1 error in 0.23s ===============================
+  
+❌ テスト13: ヘッダーファイルインクルード確認
+::error::Error: Exit with code: 1 and signal: null
+
+::***::
+Points 20/100
+  
+1s
