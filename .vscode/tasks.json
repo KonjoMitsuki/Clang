@@ -9,7 +9,7 @@
                 "-g",
                 "${file}",
                 "-o",
-                "${fileDirname}/${fileBasenameNoExtension}"
+                "/home/siiiron/clang/export_file/${fileBasenameNoExtension}"
             ],
             "options": {
                 "cwd": "${fileDirname}"
