@@ -6,5 +6,4 @@ int main(){
         printf("A[%d]=%d\n",i,A[i]);
     }
     return 0;
-
 }

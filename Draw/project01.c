@@ -24,7 +24,7 @@ int main()
         int size = current_fib * 5;
 
         printf("正方形 %d: Fib=%d, サイズ=%d, 位置=(%d, %d), 方向=%d\n",
-               i + 1, current_fib, size, x, y, direction);
+            i + 1, current_fib, size, x, y, direction);
 
         Win_FillRectangle(x, y, x + size, y + size, colors[i]);
 

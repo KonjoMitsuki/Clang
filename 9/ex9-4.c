@@ -12,5 +12,4 @@ int main(){
     }
     printf("合計値は%dです\n",sum);
     return 0;
-
 }
