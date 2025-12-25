@@ -1,7 +1,5 @@
 #include<stdio.h>
 
-// キー ボードから入力された３つの少数型の値を引数 とし，その値の平均値を計算する関数 calc_average3( ) 
-// を生成し，その平均値を画面上 に表示するプログラムを指示に従い完成させなさい。
 double calc_average3(double a, double b, double c);
 
 int main(){
