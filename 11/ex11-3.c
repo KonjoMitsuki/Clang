@@ -13,5 +13,4 @@ int main(){
     double det = A[0][0] * A[1][1] - A[0][1] * A[1][0];
     printf("det(A)=%.1f です\n", det);
     return 0;
-
 }

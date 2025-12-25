@@ -1,20 +1,75 @@
 #include <stdio.h>
 int main(){
-    int n;
-    printf("=== 物体落下シミュレーション ===\nシミュレーション秒数を入力してください:");
-    scanf("%d",&n);
-    if(n <=0||n>10){
-        printf("エラー: 1以上10以下の整数を入力してください");
+    int m,n;
+    printf("=== 行列加算プログラム ===\n行列A, B の行数mを入力してください:");
+    scanf("%d",&m);
+    if(m < 1 || m>5){
+        printf("エラー: 1以上5以下の整数を入力してください");
         return 1;
     }
-    double v[n+1];
-    printf("落下距離を計算中...\n--- 計算結果 ---\n");
-    for(int i =0;i<=n;i++){
-        // h = (1/2) × g × t²
-        v[i]= ((double)(1)/2) * 9.8 * i*i;
+    printf("行列A, B の列数nを入力してください:");
+    scanf("%d",&n);
+    if(n < 1 || n>5){
+        printf("エラー: 1以上5以下の整数を入力してください");
+        return 1;
     }
-    for(int i=0;i<=n;i++){
-        printf("%d秒後: %.2lf m\n",i,v[i]);
+
+    int A[m][n];
+    printf("行列A (%d x %d) の要素を入力してください:\n",m,n);
+    for(int i=0;i<m;i++){
+        for(int j=0;j<n;j++){
+            printf("A[%d][%d]: ",i,j);
+            scanf("%d",&A[i][j]);
+        }
     }
-    printf("最終落下距離: %.2lf m\n",v[n]);
+    printf("\n");
+
+    int B[m][n];
+    printf("行列B (%d x %d) の要素を入力してください:",m,n);
+    for(int i=0;i<m;i++){
+        for(int j=0;j<n;j++){
+            printf("B[%d][%d]: ",i,j);
+            scanf("%d",&B[i][j]);
+        }
+    }
+    printf("\n");
+
+    printf("--- 行列A ---\n");
+        for(int i=0;i<m;i++){
+            printf("   ");
+            for(int j=0;j<n;j++){
+                printf("%d   ",A[i][j]);
+            }
+            printf("\n");
+    }
+    printf("\n");
+
+    printf("--- 行列B ---\n");
+    for(int i=0;i<m;i++){
+        printf("   ");
+        for(int j=0;j<n;j++){
+            printf("%d   ",B[i][j]);
+        }
+        printf("\n");
+    }
+    printf("\n");
+
+    int C[m][n];
+    printf("--- 行列C = A + B ---\n");
+    for(int i=0;i<m;i++){
+        printf("   ");
+        for(int j=0;j<n;j++){
+            C[i][j] = A[i][j]+B[i][j];
+            printf("%d   ",C[i][j]);
+        }
+        printf("\n");
+    }
+    printf("\n");
+
+    printf("詳細表示:\n");
+    for(int i=0;i<m;i++){
+        for(int j=0;j<n;j++){
+            printf("C[%d][%d] = %d\n",i,j,C[i][j]);
+        }
+    }
 }

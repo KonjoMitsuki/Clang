@@ -2,18 +2,29 @@
 
 int main(){
     int n;
-    printf("===配列初期化プログラム===\n配列のサイズを入力してください: ");
-    scanf("%d", &n);
-    if(n <= 0 || n > 100){
-        printf("エラー: 1以上100以下の整数を入力してください\n");
+    printf("=== 九九の表プログラム ===\n表のサイズnを入力してください:");
+    scanf("%d",&n);
+    if(n>9||n<1){
+        printf("エラー: 1以上9以下の整数を入力してください");
         return 1;
     }
-    printf("配列を初期化しました\n配列の内容:\n");
-    int num[n];
-    for(int i = 0; i < n;i++){
-        num[i]=i;
+    printf("九九の表を作成しました。");
+
+    printf("--- 九九の表 (%d x %d) ---\n",n,n);
+    int table[n][n];
+    for(int i=0;i<n;i++){
+        printf("   ");
+        for(int j=0;j<n;j++){
+            table[i][j] = (i+1) * (j+1);
+            printf("%d   ",table[i][j]);
+        }
+        printf("\n");
     }
-    for(int i = 0;i < n;i++){
-        printf("X[%d] = %d\n", i, num[i]);
+    printf("\n詳細表示:\n");
+    for(int i=0;i<n;i++){
+        for(int j=0;j<n;j++){
+            printf("table[%d][%d] = %d\n",i,j,table[i][j]);
+        }
     }
+
 }
