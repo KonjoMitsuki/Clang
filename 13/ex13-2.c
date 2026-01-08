@@ -1,7 +1,3 @@
-// 下記のプログラムをベースとして，配列SrcDataと配列DstDataと配列SrcDataの要素数を引数として渡し，配
-// 列SrcDataの配列SrcDataにコピーする “関数copy_func”を定義して，実際に動作させなさい．ただし， 関数
-// copy_funcの引数の変数名は変えないこと
-
 #include <stdio.h>
 
 void copfunc(int S[], int D[], int data_size){
