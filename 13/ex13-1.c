@@ -4,8 +4,9 @@ int test_func(int data[], int data_size){
     int i,sum = 0;
     for(i = 0; i < data_size; i++)
         sum += data[i];
+        
 
-    return sum;
+    return sum/data_size;
 }
 
 int main(){
